@@ -9,8 +9,8 @@ from sklearn.metrics import accuracy_score
 from mlxtend.plotting import plot_decision_regions
 
 # Load the dataset
-def load_data(filepath):
-    df = pd.read_csv(filepath)
+def load_data(placement.csv):
+    df = pd.read_csv(placement.csv)
     df = df.iloc[:, 1:]  # Remove the redundant index column
     return df
 
