@@ -1,2 +1,69 @@
-# SkillSet-Match (For Student)
-[Project.zip](https://github.com/user-attachments/files/18205788/Project.zip)
+# SkillSet-Match (Student_Eligible_or_not)
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score
+from mlxtend.plotting import plot_decision_regions
+
+# Load the dataset
+def load_data(filepath):
+    df = pd.read_csv(filepath)
+    df = df.iloc[:, 1:]  # Remove the redundant index column
+    return df
+
+# Visualize the data
+def visualize_data(df):
+    plt.scatter(df['cgpa'], df['iq'], c=df['placement'], cmap='viridis')
+    plt.xlabel('CGPA')
+    plt.ylabel('IQ')
+    plt.title('Scatter plot of CGPA vs IQ colored by placement')
+    plt.show()
+
+# Preprocess the data
+def preprocess_data(df):
+    x = df.iloc[:, 0:2]  # Features: CGPA and IQ
+    y = df.iloc[:, -1]  # Target: Placement
+    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.1, random_state=42)
+    scaler = StandardScaler()
+    x_train = scaler.fit_transform(x_train)
+    x_test = scaler.transform(x_test)
+    return x_train, x_test, y_train, y_test
+
+# Train the logistic regression model
+def train_model(x_train, y_train):
+    clf = LogisticRegression()
+    clf.fit(x_train, y_train)
+    return clf
+
+# Evaluate the model
+def evaluate_model(clf, x_test, y_test):
+    y_pred = clf.predict(x_test)
+    accuracy = accuracy_score(y_test, y_pred)
+    print(f'Accuracy: {accuracy:.2f}')
+
+# Visualize the decision boundary
+def visualize_decision_boundary(clf, x_train, y_train):
+    plot_decision_regions(x_train, y_train.values, clf=clf, legend=2)
+    plt.xlabel('Feature 1 (scaled)')
+    plt.ylabel('Feature 2 (scaled)')
+    plt.title('Decision Boundary')
+    plt.show()
+
+if __name__ == "__main__":
+    # Filepath to the dataset
+    filepath = 'placement.csv'
+
+    # Load and process data
+    df = load_data(filepath)
+    visualize_data(df)
+    x_train, x_test, y_train, y_test = preprocess_data(df)
+
+    # Train and evaluate model
+    clf = train_model(x_train, y_train)
+    evaluate_model(clf, x_test, y_test)
+
+    # Visualize decision boundary
+    visualize_decision_boundary(clf, x_train, y_train)
